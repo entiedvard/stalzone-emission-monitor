@@ -1,0 +1,71 @@
+[plugin]
+id = "stalzone-emission-monitor"
+name = "Astra Emission Monitor"
+version = "0.1.0"
+description = "Monitor STALZONE emissions for the selected RU or EU region."
+author = "Enti Edvard"
+license = "MIT"
+
+[entry]
+command = "target/release/astra_emission_monitor"
+
+
+
+# `[capabilities]` is what the daemon may call INTO this plugin.
+[capabilities]
+tools = true
+client = true
+
+[config]
+schema = """
+{
+  "type": "object",
+  "properties": {
+    "region": {
+      "type": "string",
+      "title": "Game region",
+      "description": "STALZONE region used for emission requests.",
+      "enum": ["RU", "EU"],
+      "default": "RU"
+    },
+    "client_id": {
+      "type": "string",
+      "title": "STALZONE Client ID",
+      "description": "Application Client-Id for the official STALZONE API.",
+      "format": "password"
+    },
+    "client_secret": {
+      "type": "string",
+      "title": "STALZONE Client Secret",
+      "description": "Application Client-Secret for the official STALZONE API.",
+      "format": "password"
+    },
+    "poll_interval_secs": {
+      "type": "integer",
+      "title": "Polling interval (seconds)",
+      "description": "How often to check STALZONE for an emission state change. Minimum 15 seconds.",
+      "minimum": 15,
+      "maximum": 3600,
+      "default": 60,
+      "x-astra-advanced": true
+    }
+  }
+}
+"""
+
+# `[permissions]` is the other direction: which host RPCs the plugin may call
+# out to. Default-deny — a manifest with no `[permissions]` section may call
+# nothing beyond Register, PluginLog and GetPluginSelfConfig, so declaring a
+# capability above is not what lets the matching host call through. This is.
+#
+# `reason` is shown to the user at install time and is the entire basis of
+# their consent. Rewrite these to say what YOUR plugin does with the call, and
+# delete any line you do not actually need.
+[permissions]
+send_chat_message = { reason = "Posts a short notification to Astra chat when a new STALZONE emission begins." }
+
+# Uncomment only what you call, and say why:
+# set_variable = { reason = "…" }   # write a variable your commands can read
+# push_to_ui = { reason = "…" }   # push updates to a UI panel this plugin contributes
+# set_theme_contribution = { reason = "…" }   # repaint the active theme (high risk: its own consent checkbox)
+# dom_access = { reason = "…" }   # reach into the Astra window's DOM (high risk: refused to a sideloaded bundle)
